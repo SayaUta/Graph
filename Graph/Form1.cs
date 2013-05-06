@@ -1746,22 +1746,45 @@ namespace Graph
                 {
                     if (numPredgiper != 0)
                     {
-                        while ((x.probtime != 0) && (tmp != 0) &&
-                                (((cost + x.probcost - (planTime - numPredgiper - tmp + 1) * profit <= maxCost) && (planTime >= numPredgiper + tmp - 1))
-                                || ((cost + x.probcost <= maxCost) && (planTime < numPredgiper + tmp - 1))))
+                        flag2 = true;
+                        while ((x.probtime != 0) && (tmp != 0) && flag2)
                         {
                             flag2 = true;
                             tmp--;
                             x.time--;
                             x.probtime--;
                             cost += x.probcost;
+                            int numgiper3 = 0;
+                            for (int j = 0; j < fe; j++)
+                            {
+                                int tmpgiper = 0;
+                                foreach (Operation op in ye[j])
+                                {
+                                    tmpgiper += op.time;
+                                }
+                                if (tmpgiper > numgiper3)
+                                {
+                                    numgiper3 = tmpgiper;
+                                }
+                            }
+                            if ((((cost - (planTime - numgiper3) * profit) > maxCost) && (numgiper<=planTime)) 
+                                || ((cost > maxCost) && (numgiper>planTime)))
+                            {
+                                x.time++;
+                                tmp++;
+                                x.probtime++;
+                                cost -= x.probcost;
+                                flag2 = false;
+                                tmp = 0;
+                            }
                         }
-                        if ((!(((cost + x.probcost - (planTime - numPredgiper - tmp + 1) * profit <= maxCost) && (planTime >= numPredgiper + tmp - 1))
-                                || ((cost + x.probcost <= maxCost) && (planTime < numPredgiper + tmp - 1)))) && (giper.Count > 1))
+
+                        /*if ((!(((cost + x.probcost - (planTime - numPredgiper - tmp) * profit <= maxCost) && (planTime >= numPredgiper + tmp))
+                                || ((cost + x.probcost <= maxCost) && (planTime < numPredgiper + tmp)))) && (giper.Count > 1))
                         {
                             x.time++;
                             flag2 = false;
-                        }
+                        }*/
                     }
                 }
             } while (flag2);
